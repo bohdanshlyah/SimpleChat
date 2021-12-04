@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+    chat-be:
+      build:
+        context: ./chat-be/
+      ports:
+        - "8000:8000"
+      command: >
+        sh -c "python3 manage.py migrate &&
+               python3 manage.py runserver 0.0.0.0:8000"
+      environment:
+        - DB_HOST=db
+        - DB_NAME=app
+        - DB_USER=postgres
+        - DB_PASS=supersecretpassword
+        - REDIS_HOST=redis
+      depends_on:
+        - db
+        - redis
+                       
+    db:
+      image: postgres:13
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_DB=app
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=supersecretpassword
+
+    redis:
+      image: redis:alpine
+      ports:
+        - "6379:6379"
+
+    chat-ui:
+        build:
+            context: ./chat-ui/
+        ports:
+            - "8080:8080"
