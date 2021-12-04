@@ -21,7 +21,6 @@ env = environ.Env(
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
@@ -30,12 +29,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-bk(dd(_x6^d1a*=57&m(7+j9)iqvpma5%!=_2-#6k%wi86rld3'
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-# DEBUG = int(os.environ.get("DEBUG", default=1))
 DEBUG = env('DEBUG')
 
 
@@ -43,10 +40,6 @@ ALLOWED_HOSTS = ['*']
 
 
 # Application definition
-
-# AUTH_USER_MODEL = 'chat.CustomUser'
-
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,7 +110,6 @@ DATABASES = {
     }
 }
 
-# DATABASE_URL=postgres://postgres:admin@localhost:5432/chat
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
