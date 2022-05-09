@@ -9,11 +9,12 @@ services:
       command: >
         sh -c "python3 manage.py migrate &&
                python3 manage.py runserver 0.0.0.0:8000"
+      env_file: .env
       environment:
-        - DB_HOST=db
-        - DB_NAME=app
-        - DB_USER=postgres
-        - DB_PASS=supersecretpassword
+        - DB_HOST=$DB_HOST
+        - DB_NAME=$DB_NAME
+        - DB_USER=$DB_USER
+        - DB_PASS=$DB_PASS
         - REDIS_HOST=redis
       depends_on:
         - db
@@ -22,11 +23,12 @@ services:
     db:
       image: postgres:13
       ports:
-        - "5432:5432"
+        - "5433:5432"
+      env_file: .env
       environment:
-        - POSTGRES_DB=app
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=supersecretpassword
+        - POSTGRES_DB=$DB_NAME
+        - POSTGRES_USER=$DB_USER
+        - POSTGRES_PASSWORD=$DB_PASS
 
     redis:
       image: redis:alpine
@@ -37,4 +39,6 @@ services:
         build:
             context: ./chat-ui/
         ports:
-            - "8080:8080"
+            - "8080:80"
+
+            

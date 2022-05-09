@@ -1,4 +1,7 @@
 import json
+import time
+import threading
+import asyncio
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
 from datetime import datetime, timedelta
@@ -43,14 +46,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         else:
             date_time_obj = datetime.strptime(date, "%Y-%m-%dT%H:%M")
             date = date_time_obj-timedelta(hours=2)
-            chat_inst = Chat(chat)
-            SheduledMessage.objects.create(chat=chat_inst, date=date, text=text, user=user)
-
-            dialog = MessagePostSerializer(data={'chat': chat, 'text': 'Sorry, postponing messages is not available yet'})
+            dialog = SheduledPostMessageSerializer(data={'chat': chat, 'text': text, 'date': date})
             if dialog.is_valid():
                 await database_sync_to_async(dialog.save)(user=user)
-            mess = await self.get_last_message() 
-            serializer = MessageSerializer(mess)
+            mess = await self.get_last_message(sched=True)
+            await self.sending_delay(mess)
+            serializer = SheduledMessageSerializer(mess)
             
         message = serializer.data
 
@@ -78,5 +79,17 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         return Token.objects.get(key=token_key).user
 
     @database_sync_to_async
-    def get_last_message(self):
-        return Message.objects.latest('date')
+    def get_last_message(self, sched=False):
+        if sched:
+            return SheduledMessage.objects.latest('id')
+        else:
+            return Message.objects.latest('date')
+    
+
+    async def sending_delay(self, mess):
+        now = datetime.now()
+        delay = (mess.date - now).total_seconds()
+        print(delay)
+        if delay > 0:
+            await asyncio.sleep(delay)
+            # time.sleep(delay)

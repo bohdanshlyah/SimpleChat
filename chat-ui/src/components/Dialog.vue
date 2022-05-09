@@ -107,11 +107,11 @@ export default {
           if (this.form.textarea === '') {
             alert('Message cant be empty')
           } else {
-            alert('Sorry, postponing messages is not available yet')
-            // this.chatSocket.send(JSON.stringify({
-            //   'chat': this.id, 'text': this.form.textarea, 'token': sessionStorage.getItem('auth_token'), 'datetime': this.datetime
-            // }))
-            // this.form.textarea = ''
+            // alert('Sorry, postponing messages is not available yet')
+            this.chatSocket.send(JSON.stringify({
+              'chat': this.id, 'text': this.form.textarea, 'token': sessionStorage.getItem('auth_token'), 'datetime': this.datetime
+            }))
+            this.form.textarea = ''
           }
         } else {
           alert('Enter date and time')

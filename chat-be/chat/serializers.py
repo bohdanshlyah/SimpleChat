@@ -49,4 +49,4 @@ class SheduledPostMessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SheduledMessage
-        fields = ("chat", "date", "text", "user")
+        fields = ("chat", "date", "text")
